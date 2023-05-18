@@ -16,13 +16,13 @@ export default class App extends Component {
 
   handleSubmit = async value => {
     this.setState({ isShowSpinner: true });
-    console.log('this.state.isShowSpinner', this.state.isShowSpinner);
     this.setState({
       currentPage: 1,
       data: [],
       q: value,
     });
-    const trimmedQ = this.state.q.trim();
+    console.log('value', value);
+    const trimmedQ = value.trim();
     if (trimmedQ === '') {
       return;
     }
@@ -31,12 +31,12 @@ export default class App extends Component {
       response = await axios.get(
         `https://pixabay.com/api/?key=34995094-3137eae5ca5d9e0be5780a27e&image_type=photo&orientation=horizontal&per_page=12&q=${trimmedQ}&page=${this.state.currentPage}`
       );
-      this.setState({ isShowSpinner: false });
     } catch (error) {
       return console.log(error);
     }
     const hits = response.data.hits;
     this.setState({ data: [...hits] });
+    this.setState({ isShowSpinner: false });
   };
 
   onClick = async () => {
@@ -59,6 +59,7 @@ export default class App extends Component {
     this.setState(prevState => ({
       data: [...prevState.data, ...hits],
       currentPage: nextPage,
+      isShowSpinner: false,
     }));
   };
   render() {
@@ -69,7 +70,7 @@ export default class App extends Component {
         {this.state.data.length > 0 && <Button onClick={this.onClick} />}
         {this.state.isShowSpinner && (
           <BallTriangle
-            wrapperStyle={{ position: 'absolute', top: '50vh', left: '50vw' }}
+            wrapperStyle={{ position: 'fixed', top: '50vh', left: '50vw' }}
           />
         )}
       </div>
