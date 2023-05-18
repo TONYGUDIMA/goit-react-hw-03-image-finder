@@ -13,15 +13,8 @@ export default class App extends Component {
     isShowModal: false,
     isShowSpinner: false,
   };
-
   handleSubmit = async value => {
     this.setState({ isShowSpinner: true });
-    this.setState({
-      currentPage: 1,
-      data: [],
-      q: value,
-    });
-    console.log('value', value);
     const trimmedQ = value.trim();
     if (trimmedQ === '') {
       return;
@@ -29,33 +22,35 @@ export default class App extends Component {
     let response;
     try {
       response = await axios.get(
-        `https://pixabay.com/api/?key=34995094-3137eae5ca5d9e0be5780a27e&image_type=photo&orientation=horizontal&per_page=12&q=${trimmedQ}&page=${this.state.currentPage}`
+        `https://pixabay.com/api/?key=34995094-3137eae5ca5d9e0be5780a27e&image_type=photo&orientation=horizontal&per_page=12&q=${trimmedQ}&page=${1}`
       );
     } catch (error) {
+      this.setState({ isShowSpinner: false });
       return console.log(error);
     }
     const hits = response.data.hits;
-    this.setState({ data: [...hits] });
-    this.setState({ isShowSpinner: false });
+    this.setState({
+      data: [...hits],
+      isShowSpinner: false,
+      q: trimmedQ,
+      currentPage: 1,
+    });
   };
 
   onClick = async () => {
     this.setState({ isShowSpinner: true });
     const nextPage = this.state.currentPage + 1;
     const { q } = this.state;
-    console.log('this.state.isShowSpinner', this.state.isShowSpinner);
-    const trimmedQ = q.trim();
     let response;
     try {
       response = await axios.get(
-        `https://pixabay.com/api/?key=34995094-3137eae5ca5d9e0be5780a27e&image_type=photo&orientation=horizontal&per_page=12&q=${trimmedQ}&page=${nextPage}`
+        `https://pixabay.com/api/?key=34995094-3137eae5ca5d9e0be5780a27e&image_type=photo&orientation=horizontal&per_page=12&q=${q}&page=${nextPage}`
       );
-      this.setState({ isShowSpinner: false });
     } catch (error) {
+      this.setState({ isShowSpinner: false });
       return console.log('error', error);
     }
     const hits = response.data.hits;
-
     this.setState(prevState => ({
       data: [...prevState.data, ...hits],
       currentPage: nextPage,
