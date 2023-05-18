@@ -56,6 +56,7 @@ export default class App extends Component {
       currentPage: nextPage,
       isShowSpinner: false,
     }));
+    ///LOL
   };
   render() {
     return (
